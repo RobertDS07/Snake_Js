@@ -1,6 +1,9 @@
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
 
+console.log(navigator);
+
+
 let userWidth, userHeight
 let direcao = 'y'
 let snakeTail = []
@@ -173,12 +176,4 @@ function render() {
 
     eatFood()
 }
-setInterval(render, 80)
-function test(){
-    if(window.innerHeight > window.innerWidth){
-        alert('BOTA O CELL DE LADO AI EDUARDINHA')
-        snakeHead.velocity = 0
-    } else{
-        snakeHead.velocity = 1
-    }
-}setInterval(test, 3000)
+setInterval(render, 50)
