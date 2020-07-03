@@ -12,6 +12,7 @@ body{
 }
 
 canvas{
+    position: fixed;
     width: 400px;
     height: 400px;
     image-rendering: pixelated;
