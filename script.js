@@ -1,7 +1,10 @@
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
 
-document.addEventListener('keydown', e => chageMoviment(e))
+let direcao = 'y'
+let snakeTail = []
+let positionTail = {}
+let touchs = []
 
 const snakeHead = {
     width: 1,
@@ -24,11 +27,46 @@ const food = {
     }
 }
 
-let direcao = 'y'
-let snakeTail = []
-let positionTail = {}
 
-function drawBackground(){
+document.addEventListener('keydown', e => chageMoviment(e))
+document.addEventListener('touchstart', e => catchTouchStart(e.changedTouches[0].pageX, e.changedTouches[0].pageY))
+document.addEventListener('touchend', e => catchEndTouch(e.changedTouches[0].pageX, e.changedTouches[0].pageY))
+
+function catchTouchStart(x, y) {
+    touchs.splice(0, 2)
+    let touchStart = { x, y }
+    touchs.push(touchStart)
+}
+
+function catchEndTouch(x, y) {
+    let endTouch = { x, y }
+    touchs.push(endTouch)
+
+    let moduleX = touchs[1].x - touchs[0].x
+    let moduleY = touchs[1].y - touchs[0].y
+
+    if (Math.abs(moduleX) > Math.abs(moduleY)) {
+        if (direcao != 'x') {
+            direcao = 'x'
+            if (moduleX < 0) {
+                moviment = e => snakeHead.position.x -= snakeHead.velocity
+            } else {
+                moviment = e => snakeHead.position.x += snakeHead.velocity
+            }
+        }
+    } else {
+        if (direcao != 'y') {
+            direcao = 'y'
+            if (moduleY < 0) {
+                moviment = e => snakeHead.position.y -= snakeHead.velocity
+            } else {
+                moviment = e => snakeHead.position.y += snakeHead.velocity
+            }
+        }
+    }
+}
+
+function drawBackground() {
     context.fillStyle = 'white'
     context.fillRect(0, 0, 30, 30)
 }
@@ -43,28 +81,28 @@ function drawFood() {
     context.fillRect(food.position.x, food.position.y, food.width, food.height)
 }
 
-function drawTail(){
+function drawTail() {
     for (a in snakeTail) {
         context.fillStyle = snakeHead.color
         context.fillRect(snakeTail[a].x, snakeTail[a].y, snakeHead.width, snakeHead.height)
     }
 }
 
-function rules(){
-    if(snakeHead.position.x > 30){
-        snakeHead.position.x = -1
+function rules() {
+    if (snakeHead.position.x > 29) {
+        snakeHead.position.x = 0
     }
-    if(snakeHead.position.x < -1){
-        snakeHead.position.x = 30
+    if (snakeHead.position.x < 0) {
+        snakeHead.position.x = 29
     }
-    if(snakeHead.position.y < -1){
-        snakeHead.position.y = 30
+    if (snakeHead.position.y < 0) {
+        snakeHead.position.y = 29
     }
-    if(snakeHead.position.y > 30){
-        snakeHead.position.y = -1
+    if (snakeHead.position.y > 29) {
+        snakeHead.position.y = 0
     }
-    for(a in snakeTail){
-        if(snakeHead.position.x == snakeTail[a].x && snakeHead.position.y == snakeTail[a].y){
+    for (a in snakeTail) {
+        if (snakeHead.position.x == snakeTail[a].x && snakeHead.position.y == snakeTail[a].y) {
             snakeTail.splice(1, snakeTail.length)
         }
     }
@@ -78,32 +116,32 @@ function chageMoviment(e) {
     switch (e.key) {
         case 'ArrowUp':
             if (direcao != 'y') {
-                direcao = 'y'
                 moviment = e => snakeHead.position.y -= snakeHead.velocity
+                direcao = 'y'
             }
             break
         case 'ArrowDown':
             if (direcao != 'y') {
-                direcao = 'y'
                 moviment = e => snakeHead.position.y += snakeHead.velocity
+                direcao = 'y'
             }
             break
         case 'ArrowRight':
             if (direcao != 'x') {
-                direcao = 'x'
                 moviment = e => snakeHead.position.x += snakeHead.velocity
+                direcao = 'x'
             }
             break
         case 'ArrowLeft':
             if (direcao != 'x') {
-                direcao = 'x'
                 moviment = e => snakeHead.position.x -= snakeHead.velocity
+                direcao = 'x'
             }
             break
     }
 }
 
-function eatFood(){
+function eatFood() {
     if (snakeHead.position.x == food.position.x && snakeHead.position.y == food.position.y) {
         food.position.x = Math.floor(Math.random() * 30)
         food.position.y = Math.floor(Math.random() * 30)
@@ -115,6 +153,7 @@ function eatFood(){
 function render() {
     drawBackground()
     rules()
+
     drawFood()
 
     positionTail = {
