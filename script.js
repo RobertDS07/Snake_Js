@@ -1,6 +1,7 @@
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
 
+let userWidth, userHeight
 let direcao = 'y'
 let snakeTail = []
 let positionTail = {}
@@ -26,7 +27,6 @@ const food = {
         y: Math.floor(Math.random() * 30)
     }
 }
-
 
 document.addEventListener('keydown', e => chageMoviment(e))
 document.addEventListener('touchstart', e => catchTouchStart(e.changedTouches[0].pageX, e.changedTouches[0].pageY))
@@ -67,8 +67,10 @@ function catchEndTouch(x, y) {
 }
 
 function drawBackground() {
-    context.fillStyle = 'white'
-    context.fillRect(0, 0, 30, 30)
+    userWidth = window.innerWidth
+    userHeight = window.innerHeight
+    canvas.width = Math.floor(userWidth / 10)
+    canvas.height = Math.floor(userHeight / 10)
 }
 
 function drawHead() {
@@ -89,16 +91,16 @@ function drawTail() {
 }
 
 function rules() {
-    if (snakeHead.position.x > 29) {
+    if (snakeHead.position.x >= Math.floor(userWidth / 10)) {
         snakeHead.position.x = 0
     }
     if (snakeHead.position.x < 0) {
-        snakeHead.position.x = 29
+        snakeHead.position.x = Math.floor(userWidth / 10) - 1
     }
     if (snakeHead.position.y < 0) {
-        snakeHead.position.y = 29
+        snakeHead.position.y = Math.floor(userHeight / 10) - 1
     }
-    if (snakeHead.position.y > 29) {
+    if (snakeHead.position.y >= Math.floor(userHeight / 10)) {
         snakeHead.position.y = 0
     }
     for (a in snakeTail) {
@@ -143,8 +145,8 @@ function chageMoviment(e) {
 
 function eatFood() {
     if (snakeHead.position.x == food.position.x && snakeHead.position.y == food.position.y) {
-        food.position.x = Math.floor(Math.random() * 30)
-        food.position.y = Math.floor(Math.random() * 30)
+        food.position.x = Math.floor(Math.random() * userWidth / 10)
+        food.position.y = Math.floor(Math.random() * userHeight / 10)
     } else {
         snakeTail.pop()
     }
@@ -170,6 +172,13 @@ function render() {
     drawTail()
 
     eatFood()
-
 }
-setInterval(render, 100)
+setInterval(render, 80)
+function test(){
+    if(window.innerHeight > window.innerWidth){
+        alert('BOTA O CELL DE LADO AI EDUARDINHA')
+        snakeHead.velocity = 0
+    } else{
+        snakeHead.velocity = 1
+    }
+}setInterval(test, 3000)
